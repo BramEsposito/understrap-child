@@ -31,3 +31,15 @@ function add_child_theme_textdomain() {
     load_child_theme_textdomain( 'understrap-child', get_stylesheet_directory() . '/languages' );
 }
 add_action( 'after_setup_theme', 'add_child_theme_textdomain' );
+
+$understrap_includes = array(
+  '/setup.php',                           // Theme setup and custom theme supports.
+);
+
+foreach ( $understrap_includes as $file ) {
+  $filepath = locate_template( 'inc' . $file );
+  if ( ! $filepath ) {
+    trigger_error( sprintf( 'Error locating /inc%s for inclusion', $file ), E_USER_ERROR );
+  }
+  require_once $filepath;
+}
