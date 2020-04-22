@@ -33,7 +33,7 @@ function add_child_theme_textdomain() {
 add_action( 'after_setup_theme', 'add_child_theme_textdomain' );
 
 $understrap_includes = array(
-  '/setup.php',                           // Theme setup and custom theme supports.
+  '/child-setup.php',                           // Theme setup and custom theme supports.
 );
 
 foreach ( $understrap_includes as $file ) {
