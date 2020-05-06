@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-sm navbar-light bg-light d-sm-none d-md-block">
+<nav class="navbar navbar-expand-sm navbar-dark bg-primary d-sm-none d-md-block">
 
   <?php if ( 'container' == $container ) : ?>
     <div class="container">
@@ -20,7 +20,7 @@
     </div><!-- .container -->
 <?php endif; ?>
 </nav>
-<nav class="navbar navbar-expand-md navbar-dark bg-primary">
+<nav class="navbar navbar-expand-md navbar-light">
 
   <?php if ( 'container' == $container ) : ?>
   <div class="container">
