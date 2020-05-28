@@ -11,8 +11,9 @@
   "paths" : {
     "js": "./js",
     "css": "./css",
+    "editor_css": "./css",
     "img": "./img",
-		"imgsrc": "./src/img",
+    "imgsrc": "./src/img",
     "sass": "./sass",
     "node": "./node_modules/",
     "bower": "./bower_components/",

@@ -2,6 +2,7 @@
 var gulp = require( 'gulp' );
 var plumber = require( 'gulp-plumber' );
 var sass = require( 'gulp-sass' );
+var sassGlob = require('gulp-sass-glob');
 var cssnano = require( 'gulp-cssnano' );
 var rename = require( 'gulp-rename' );
 var concat = require( 'gulp-concat' );
@@ -15,6 +16,7 @@ var del = require( 'del' );
 var cleanCSS = require( 'gulp-clean-css' );
 var replace = require( 'gulp-replace' );
 var autoprefixer = require( 'gulp-autoprefixer' );
+var notify = require('gulp-notify');
 
 // Configuration file to keep your code DRY
 var cfg = require( './gulpconfig.json' );
@@ -24,20 +26,38 @@ var paths = cfg.paths;
 // gulp sass
 // Compiles SCSS files in CSS
 gulp.task( 'sass', function() {
-    var stream = gulp.src( `${paths.sass}/*.scss` )
+    var stream = gulp.src( `${paths.sass}/child-theme.scss` )
         .pipe( sourcemaps.init( { loadMaps: true } ) )
         .pipe( plumber( {
             errorHandler: function( err ) {
                 console.log( err );
+                notify().write( err );
                 this.emit( 'end' );
             }
         } ) )
+        .pipe( sassGlob() )
         .pipe( sass( { errLogToConsole: true } ) )
         .pipe( autoprefixer( 'last 2 versions' ) )
         .pipe( sourcemaps.write( './' ) )
-        .pipe( gulp.dest( paths.css ) )
-        .pipe( rename( 'custom-editor-style.css' ) );
+        .pipe( gulp.dest( paths.css ) );
     return stream;
+});
+
+gulp.task( 'editor-style', function() {
+  var stream = gulp.src( `${paths.sass}/editor-style.scss` )
+      .pipe( plumber( {
+        errorHandler: function( err ) {
+          console.log( err );
+          notify().write( err );
+          this.emit( 'end' );
+        }
+      } ) )
+      .pipe( sassGlob() )
+      .pipe( sass( { errLogToConsole: true } ) )
+      .pipe( autoprefixer( 'last 2 versions' ) )
+      .pipe( sourcemaps.write( './' ) )
+      .pipe( gulp.dest( paths.editor_css ) );
+  return stream;
 });
 
 // Run:
@@ -45,6 +65,7 @@ gulp.task( 'sass', function() {
 // Starts watcher. Watcher runs gulp sass task on changes
 gulp.task( 'watch', function() {
     gulp.watch( `${paths.sass}/**/*.scss`, gulp.series('styles') );
+    gulp.watch( `${paths.sass}/**/*.scss`, gulp.series('editor-style') );
     gulp.watch( [`${paths.dev}/js/**/*.js`, 'js/**/*.js', '!js/child-theme.js', '!js/child-theme.min.js'], gulp.series('scripts') );
 
     //Inside the watch task.
@@ -107,7 +128,7 @@ gulp.task( 'cleancss', function() {
     .pipe( rimraf() );
 });
 
-gulp.task( 'styles', gulp.series( 'sass', 'minifycss' ));
+gulp.task( 'styles', gulp.series( 'sass', 'minifycss' , function(cb) { notify().write("Recompiled SCSS!"); cb(); }));
 
 // Run:
 // gulp browser-sync
@@ -181,11 +202,11 @@ gulp.task( 'copy-assets', function() {
 
 
 // _s SCSS files
-    gulp.src( `${paths.node}undescores-for-npm/sass/media/*.scss` )
+    gulp.src( `${paths.node}underscores-for-npm/sass/media/*.scss` )
         .pipe( gulp.dest( `${paths.dev}/sass/underscores` ) );
 
 // _s JS files into /src/js
-    gulp.src( `${paths.node}undescores-for-npm/js/skip-link-focus-fix.js` )
+    gulp.src( `${paths.node}underscores-for-npm/js/skip-link-focus-fix.js` )
         .pipe( gulp.dest( `${paths.dev}/js` ) );
 
 // Copy Popper JS files
